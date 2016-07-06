@@ -9,8 +9,12 @@
 <body>
 Active Directory Help Tool
 <form action="Adhelp" method="get">
-  User or Group: <input type="text" name="samAccountName"><br>
-  Type (user or group)<select name="type">
+  User or Group: <input type="text" name="id"><br>
+  Attribute: <select name="attrType">
+    <option value="samAccountName">samAccountName</option>
+    <option value="cn">cn</option>
+    </select><br>
+  Type (user or group): <select name="type">
     <option value="user">user</option>
     <option value="group">group</option>
   </select>
