@@ -4,6 +4,9 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <listener>
+  	<listener-class>org.apache.ldap.KerberosContextListener</listener-class>
+  </listener>
   <servlet>
   	<servlet-name>Adhelp</servlet-name>
   	<display-name>Adhelp</display-name>
