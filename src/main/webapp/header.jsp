@@ -13,7 +13,7 @@ Active Directory Help Tool
   Attribute: <select name="attrType">
     <option value="samAccountName">samAccountName</option>
     <option value="cn">cn</option>
-    </select><br>
+    </select> Note: <br>
   Type (user or group): <select name="type">
     <option value="user">user</option>
     <option value="group">group</option>

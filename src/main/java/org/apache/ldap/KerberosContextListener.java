@@ -4,6 +4,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.adldap.KerberosClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -16,6 +18,8 @@ public class KerberosContextListener implements ServletContextListener, Runnable
 	private final Object lock = new Object();
 	private String keytab;
 	private String principalName;
+	private static final Logger LOG = LoggerFactory.getLogger(KerberosContextListener.class);
+
 
 	/**
 	 * Default constructor.
@@ -37,13 +41,13 @@ public class KerberosContextListener implements ServletContextListener, Runnable
 	public void contextInitialized(ServletContextEvent sce) {
 		keytab = System.getProperty("adhelp.keytab");
 		principalName = System.getProperty("adhelp.principalName");
-		System.out.println("KeyTab: "+keytab);
-		System.out.println("principalName: "+principalName);
+		LOG.info("KeyTab: "+keytab);
+		LOG.info("principalName: "+principalName);
 
 		krbClient = new KerberosClient(principalName, null, keytab);
 		t = new Thread(this);
 		t.start();
-		System.out.println("Kerberos Renewal thread started");
+		LOG.info("Kerberos Renewal thread started");
 	}
 
 	public void run() {
@@ -52,13 +56,13 @@ public class KerberosContextListener implements ServletContextListener, Runnable
 			try {
 				while (true) {
 					KerberosCreds.setSubject(krbClient.getSubject());
-					System.out.println("deamon working...");
+					LOG.debug("daemon working...");
 					lock.wait(18000000L);
 					krbClient.reinitContext();
 
 				}
 			} catch (InterruptedException e) {
-				System.out.println("kerberos renewal thread stopped");
+				LOG.info("kerberos renewal thread stopped");
 			}
 		}
 	}

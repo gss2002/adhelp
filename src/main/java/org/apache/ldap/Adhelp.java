@@ -15,9 +15,11 @@ import org.apache.adldap.DnsLookup;
 import org.apache.adldap.LdapApi;
 import org.apache.adldap.LdapClient;
 import org.apache.adldap.LdapClientSASL;
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Servlet implementation class Adhelp
@@ -25,19 +27,17 @@ import org.json.JSONObject;
 public class Adhelp extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static String gcldapURL = "";
-	private static String gcbindDn = "";
-	private static String gcbindPw = "";
 	private static String gcbaseDn = "";
-	Logger LOG = Logger.getLogger(Adhelp.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Adhelp.class);
+
+
 
 	/**
 	 * Default constructor.
 	 */
 	public Adhelp() {
 		// TODO Auto-generated constructor stub
-		gcbaseDn = "OU=INTERNAL,dc=hdpusr,dc=senia,dc=org";
-		gcbindDn = "cn=ldapsearch,ou=internal,dc=hdpusr,dc=senia,dc=org";
-		gcbindPw = "";
+		gcbaseDn = "dc=hdpusr,dc=senia,dc=org";
 		gcldapURL = "ldap://seniadc1.senia.org:3268";
 
 	}
@@ -70,12 +70,12 @@ public class Adhelp extends HttpServlet {
 				String dn = gcapi.getDN(gcldpClient, gcbaseDn, samAccountName);
 				String domain_interim = dn.split(",DC=", 2)[1];
 				String domain_baseDN = "DC="+domain_interim;
-				System.out.println("dn: "+dn);
-				System.out.println("baseDN="+domain_baseDN);
+				LOG.debug("dn: "+dn);
+				LOG.debug("baseDN="+domain_baseDN);
 				String domain = domain_baseDN.replace("DC=", "").replace(",", ".");
 		        String baseDn = domain_baseDN;
-		        System.out.println(domain_baseDN);
-		        System.out.println(domain);
+		        LOG.debug(domain_baseDN);
+		        LOG.debug(domain);
 
 		        DnsLookup dns = new DnsLookup();
 		        String ldapServer = dns.getLdapServer(domain);
@@ -215,7 +215,7 @@ public class Adhelp extends HttpServlet {
 				String samAccountName = null;
 				LdapClient gcldpClient = new LdapClientSASL(gcbaseDn, gcldapURL, KerberosCreds.getSubject());
 				LdapApi gcapi = new LdapApi();
-				System.out.println("attrype: " + attrtype);
+				LOG.debug("attrype: " + attrtype);
 				if (attrtype.equalsIgnoreCase("samAccountName")) {
 					samAccountName = request.getParameter("id");
 					LOG.info("UsersamAccountName: " + samAccountName);
@@ -229,12 +229,12 @@ public class Adhelp extends HttpServlet {
 				String dn = gcapi.getDN(gcldpClient, gcbaseDn, samAccountName);
 				String domain_interim = dn.split(",DC=", 2)[1];
 				String domain_baseDN = "DC="+domain_interim;
-				System.out.println("dn: "+dn);
-				System.out.println("baseDN="+domain_baseDN);
+				LOG.debug("dn: "+dn);
+				LOG.debug("baseDN="+domain_baseDN);
 				String domain = domain_baseDN.replace("DC=", "").replace(",", ".");
 		        String baseDn = domain_baseDN;
-		        System.out.println(domain_baseDN);
-		        System.out.println(domain);
+		        LOG.debug(domain_baseDN);
+		        LOG.debug(domain);
 
 		        DnsLookup dns = new DnsLookup();
 		        String ldapServer = dns.getLdapServer(domain);
