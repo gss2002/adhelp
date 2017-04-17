@@ -17,6 +17,18 @@
 	<name>adhelp Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 
+	<properties>
+		<app.home>/apps/adhelp/</app.home>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<install.user>root</install.user>
+		<java.version>1.8</java.version>
+		<junit.version>3.8.1</junit.version>
+		<json.version>20160212</json.version>
+		<log4j.version>1.2.17</log4j.version>
+		<adldap.version>1.0</adldap.version>
+		<servlet-api.version>3.0.1</servlet-api.version>
+	</properties>
+
 	<repositories>
 		<repository>
 			<id>maven.senia.org</id>
@@ -35,23 +47,23 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
+			<version>${servlet-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20160212</version>
+			<version>${json.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache</groupId>
 			<artifactId>adldap</artifactId>
-			<version>1.0</version>
+			<version>${adldap.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
+			<version>${log4j.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -83,8 +95,8 @@
 				<version>2.3.2</version>
 				<configuration>
 					<fork>true</fork>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
 			<plugin>
