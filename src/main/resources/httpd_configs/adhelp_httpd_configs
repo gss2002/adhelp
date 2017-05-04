@@ -1,0 +1,14 @@
+
+
+  <LocationMatch "/adhelp">
+    SSLVerifyClient require
+    SSLVerifyDepth 3
+    SSLUserName SSL_CLIENT_S_DN_CN
+  </LocationMatch>
+
+  #########
+  # adhelper app
+  ###
+
+  RewriteRule      "^/adhelp/Adhelp(.*)$"  "http://localhost:38081/adhelp/Adhelp$1"  [P]
+  ProxyPassReverse "/adhelp/Adhelp" "http://localhost:38081/adhelp/Adhelp"

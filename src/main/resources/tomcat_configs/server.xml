@@ -1,0 +1,83 @@
+[root@ha21t51ws conf]# diff -Naur ./server.xml ../../../adhelp-tomcat/conf/server.xml 
+--- ./server.xml	2017-08-02 16:32:08.000000000 -0400
++++ ../../../adhelp-tomcat/conf/server.xml	2016-08-04 17:30:05.000000000 -0400
+@@ -1,4 +1,4 @@
+-<?xml version="1.0" encoding="UTF-8"?>
++<?xml version='1.0' encoding='utf-8'?>
+ <!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+@@ -19,7 +19,7 @@
+      define subcomponents such as "Valves" at this level.
+      Documentation at /docs/config/server.html
+  -->
+-<Server port="8005" shutdown="SHUTDOWN">
++<Server port="38005" shutdown="SHUTDOWN">
+   <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+   <!-- Security listener. Documentation at /docs/config/listeners.html
+   <Listener className="org.apache.catalina.security.SecurityListener" />
+@@ -66,23 +66,19 @@
+          APR (HTTP/AJP) Connector: /docs/apr.html
+          Define a non-SSL/TLS HTTP/1.1 Connector on port 8080
+     -->
+-    <Connector port="8080" protocol="HTTP/1.1"
++    <Connector port="38081" protocol="HTTP/1.1"
+                connectionTimeout="20000"
+                redirectPort="8443" />
+     <!-- A "Connector" using the shared thread pool-->
+     <!--
+     <Connector executor="tomcatThreadPool"
+-               port="8080" protocol="HTTP/1.1"
++               port="38081" protocol="HTTP/1.1"
+                connectionTimeout="20000"
+                redirectPort="8443" />
+     -->
+     <!-- Define a SSL/TLS HTTP/1.1 Connector on port 8443
+-         This connector uses the NIO implementation. The default
+-         SSLImplementation will depend on the presence of the APR/native
+-         library and the useOpenSSL attribute of the
+-         AprLifecycleListener.
+-         Either JSSE or OpenSSL style configuration may be used regardless of
+-         the SSLImplementation selected. JSSE style configuration is used below.
++         This connector uses the NIO implementation with the JSSE engine. When
++         using the JSSE engine, the JSSE configuration attributes must be used.
+     -->
+     <!--
+     <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+@@ -94,10 +90,9 @@
+     </Connector>
+     -->
+     <!-- Define a SSL/TLS HTTP/1.1 Connector on port 8443 with HTTP/2
+-         This connector uses the APR/native implementation which always uses
+-         OpenSSL for TLS.
+-         Either JSSE or OpenSSL style configuration may be used. OpenSSL style
+-         configuration is used below.
++         This connector uses the APR/native implementation. When using the
++         APR/native implementation or the OpenSSL engine with NIO or NIO2 then
++         the OpenSSL configuration attributes must be used.
+     -->
+     <!--
+     <Connector port="8443" protocol="org.apache.coyote.http11.Http11AprProtocol"
+@@ -113,7 +108,7 @@
+     -->
+ 
+     <!-- Define an AJP 1.3 Connector on port 8009 -->
+-    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
++    <Connector port="38009" protocol="AJP/1.3" redirectPort="8443" />
+ 
+ 
+     <!-- An Engine represents the entry point (within Catalina) that processes
+@@ -153,11 +148,12 @@
+         <!--
+         <Valve className="org.apache.catalina.authenticator.SingleSignOn" />
+         -->
++        <Valve className="org.apache.catalina.valves.RemoteIpValve" internalProxies="127\.0\.0\.1|::1|0:0:0:0:0:0:0:1" />
+ 
+         <!-- Access log processes all example.
+              Documentation at: /docs/config/valve.html
+              Note: The pattern used is equivalent to using pattern="common" -->
+-        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
++        <Valve className="org.apache.catalina.valves.AccessLogValve" requestAttributesEnabled="true" directory="logs"
+                prefix="localhost_access_log" suffix=".txt"
+                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+

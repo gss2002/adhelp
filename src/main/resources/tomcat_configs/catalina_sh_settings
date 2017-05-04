@@ -1,0 +1,3 @@
+umask 077
+export JAVA_HOME=/usr/jdk64/jdk1.8.0_144/
+export JAVA_OPTS="-Djava.security.krb5.conf=/etc/krb5.conf -Dadhelp.keytab=/apps/webapps/adhelp-tomcat/conf/username.keytab -Dadhelp.principalName=adhelpbind@HDPUSR.SENIA.ORG -Dlog4j.configuration=file:///apps/webapps/adhelp-tomcat/conf/log4j.properties -Dldap.ssl=true -DldapServer=ldaps://seniadc1.hdpusr.senia.org:3269 -DldapBaseDN=dc\=hdpusr,dc\=senia,dc\=org"
