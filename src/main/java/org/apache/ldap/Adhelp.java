@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.naming.directory.Attribute;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.adldap.DnsLookup;
 import org.apache.adldap.LdapApi;
@@ -41,10 +43,16 @@ import org.slf4j.LoggerFactory;
 /**
  * Servlet implementation class Adhelp
  */
+@WebServlet("/Adhelp")
 public class Adhelp extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static String gcldapURL = "";
+        private static String ldapServer;
+        private static String ldapServerDns;
+        private static String ldapProtocol; 
+        private static String ldapPort;
 	private static String gcbaseDn = "";
+        private static DnsLookup dnsLookup;
 	private static final Logger LOG = LoggerFactory.getLogger(Adhelp.class);
 
 	/**
@@ -56,14 +64,16 @@ public class Adhelp extends HttpServlet {
 
 		if (System.getProperty("ldapBaseDN") != null) {
 			gcbaseDn = System.getProperty("ldapBaseDN");
-			// "dc=hdpusr,dc=senia,dc=org";
 
 		} else {
 			System.out.println("Base DN Missing");
 		}
 		if (System.getProperty("ldapServer") != null) {
-			gcldapURL = System.getProperty("ldapServer");
-			// "ldap://seniadc1.senia.org:3268";
+                        ldapServer = System.getProperty("ldapServer");
+			ldapProtocol = ldapServer.split("://")[0];
+			ldapServerDns = ldapServer.split("://")[1].split(":")[0];
+			ldapPort = ldapServer.split("://")[1].split(":")[1];
+			dnsLookup = new DnsLookup();
 		}
 
 	}
@@ -75,6 +85,7 @@ public class Adhelp extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+                gcldapURL = ldapProtocol+"://"+dnsLookup.getLdapServer(ldapServerDns)+":"+ldapPort;
 		if (request.getParameter("json") != null) {
 			String reqtype = request.getParameter("type");
 			String attrtype = request.getParameter("attrType");
@@ -93,29 +104,34 @@ public class Adhelp extends HttpServlet {
 					LOG.info("usercn: " + cn);
 					samAccountName = gcapi.getSamAccountNameFromCN(gcldpClient, gcbaseDn, cn);
 				}
+				if (attrtype.equalsIgnoreCase("eupn")) {
+					String eupn = request-getParameter ("id");
+					LOG.info("eupn: " + eupn);
+					samAccountName = gcapi.getSamAccountNameFromEUPN(gcldpClient, gcbaseDn, eupn);
+				}
 				String dn = gcapi.getDN(gcldpClient, gcbaseDn, samAccountName);
 				String domain_interim = dn.split(",DC=", 2)[1];
-				String domain_baseDN = "DC=" + domain_interim;
-				LOG.debug("dn: " + dn);
-				LOG.debug("baseDN=" + domain_baseDN);
+				String domain_baseDN = "DC="+domain_interim;
+				LOG.debug("dn: "+dn);
+				LOG.debug("baseDN="+domain_baseDN);
 				String domain = domain_baseDN.replace("DC=", "").replace(",", ".");
 				String baseDn = domain_baseDN;
 				LOG.debug(domain_baseDN);
-				LOG.debug(domain);
-
-				DnsLookup dns = new DnsLookup();
+				LOG.debug (domain);
+				DnsLookup dns = new DnsLookup() ;
 				String ldapUrl = "";
-				String ldapServer = dns.getLdapServer(domain);
-				if (System.getProperty("ldap.ssl") != null) {
-					if (System.getProperty("ldap.ssl").equalsIgnoreCase("true")) {
-						ldapUrl = "ldaps://" + ldapServer + ":636";
+				String ldapServer = dns.getLdapServer(domain)
+				if (System.getProperty("ldap.ssl") |= null) {
+					if (System.getProperty("ldap.ssl").equalsIgnoreCase("true")) {|
+						ldapUrl = "ldaps://"+ldapServer+":636";
 					} else {
-						ldapUrl = "ldap://" + ldapServer + ":389";
+						ldapUrl = "1dap://"+ldapServer+":389";
 					}
 				} else {
-					ldapUrl = "ldap://" + ldapServer + ":389";
+					ldapUrl = "ldap://"+ldapServer+":389";
 				}
-				LdapClient ldpClient = new LdapClientSASL(baseDn, ldapUrl, KerberosCreds.getSubject());
+				LdapClient ldpClient = new LdapClientSASL(baseDn, ldapUrl,
+
 				LdapApi api = new LdapApi();
 				Map<String, Attribute> results = api.getADUserGCAttrs(ldpClient, baseDn, samAccountName);
 				JSONObject obj = new JSONObject();
@@ -129,10 +145,14 @@ public class Adhelp extends HttpServlet {
 					obj.put("manager", "type=user&attrType=samAccountName&id=" + manager);
 				}
 				obj.put("eUPN", api.getUPN(results));
-				obj.put("iUPN", api.getSamAccountName(results) + "@" + domain);
+				obj.put("iUPN", api.getSamAccountName(results)+"@"+domain);
 				obj.put("phone", api.getPhoneNumber(results));
+				obj.put("ipPhoneExtension", api.getIpPhone(results));
 				obj.put("email", api.getUserMail(results));
 				obj.put("description", api.getDescription(results));
+				obj.put("department", api.getDepartment(results));
+				obj.put("division", api.getDivision(results));
+				obj.put("title", api.getTitle(results));
 				obj.put("location", api.getLocation(results));
 				obj.put("state", api.getSt(results));
 				obj.put("country", api.getCountry(results));
@@ -144,27 +164,31 @@ public class Adhelp extends HttpServlet {
 				obj.put("createTimeStamp", api.getCreateTimeStamp(results));
 				obj.put("modifyTimeStamp", api.getModifyTimeStamp(results));
 				obj.put("lastLogonTimeStamp", api.getLastLogonTimeStamp(results));
-				obj.put("pwdLastSet", api.getPwdLastSet(results));
-				obj.put("lockoutTime", api.getLockOutTime(results));
-				obj.put("badPwdCount", api.getBadPwdCount(results));
-				obj.put("badPasswordTime", api.getBadPwdTime(results));
 				long uacc = api.getUACC(results);
 				long uac = api.getUserAccountControl(results);
-				obj.put("Account Disabled", api.getAccountDisabled(uac));
-				obj.put("Password Never Expires", api.getPasswordNeverExpires(uac));
-				obj.put("SmartCard Required", api.getSmartCardRequired(uac));
-				obj.put("Kerberos PreAuth Required", api.getRequireKrbPreAuth(uac));
-				obj.put("Kerberos DES Types Allowed", api.getUseKrbDESTypes(uac));
-				obj.put("Use Reversible Encryption Password", api.getUseRevEncryptPasswd(uac));
-				obj.put("Allow Delegation", api.getAllowDelegation(uac));
-				obj.put("Account LockedOut", api.getLockedOut(uacc));
+				obj.put("accountDisabled", api.getAccountDisabled(uac));
+				obj.put("accountExpires", api.getAccountExpires(results));
+				obj.put("accountLockedOut", api.getLockedOut(uacc));
+				obj.put("pwdLastSet", api.getPwdLastSet(results));
+				obj.put("pwdExpiredLDAP", api.getPwdExpired(results, api.getPasswordNeverExpires(uac)));
+				obj.put("pwdExpiredNTLM", api.getNTPwdExpired(uac));
+				obj.put("pwdExpires On", api.getMsDSUserPasswordExpiryTimeComputed(results));
+				obj.put("lockoutTime", api.getLockOutTime(results));
+				obj.put("badPasswordCount", api.getBadPwdCount(results));
+				obj.put("badPasswordTime", api.getBadPwdTime(results));
+				obj.put("pwdNeverExpires", api.getPasswordNeverExpires(uac));
+				obj.put("smartCard Required", api.getSmartCardRequired(uac));
+				obj.put("kerberosPreAuthRequired", api.getRequireKrbPreAuth(uac));
+				obj.put("kerberosDESTypesAllowed", api.getUseKrbDESTypes(uac));
+				obj.put("kvno", api.getMsDSKeyVersionNumber(results));
+				obj.put("useReversibleEncryptionPassword", api.getUseRevEncryptPasswd (uac));
+				obj.put("allowDelegation", api.getAllowDelegation(uac));
 
 				List<String> groupList = api.getMemberOf(results);
-				if (groupList != null) {
+				if (groupList != null ) {
 					JSONArray jsonGroupArray = new JSONArray();
 					for (int i = 0; i < groupList.size(); i++) {
-						String memberof = gcapi
-								.getSamAccountName(gcapi.getGroupDNAttrs(gcldpClient, gcbaseDn, groupList.get(i)));
+						String memberof = gcapi.getSamAccountName(gcapi.getGroupDNAttrs(gcldpClient, gcbaseDn, groupList.get(i)));
 						LOG.debug("member: " + memberof);
 						jsonGroupArray.put("type=group&attrType=samAccountName&id=" + memberof);
 					}
@@ -189,8 +213,7 @@ public class Adhelp extends HttpServlet {
 					LOG.info("groupCn: " + cn);
 					groupSamAccountName = gcapi.getSamAccountNameFromCN(gcldpClient, gcbaseDn, cn);
 				}
-				Map<String, Attribute> groupResults = gcapi.getADGroupGCAttrs(gcldpClient, gcbaseDn,
-						groupSamAccountName);
+				Map<String, Attribute> groupResults = gcapi.getADGroupGCAttrs(gcldpClient, gcbaseDn, groupSamAccountName);
 				JSONObject obj = new JSONObject();
 				obj.put("groupSamAccountName", groupSamAccountName);
 				obj.put("cn", gcapi.getCN(groupResults));
@@ -199,6 +222,7 @@ public class Adhelp extends HttpServlet {
 				obj.put("description", gcapi.getDescription(groupResults));
 				obj.put("whenChanged", gcapi.getWhenChanged(groupResults));
 				obj.put("whenCreated", gcapi.getWhenCreated(groupResults));
+				obj.put("groupType", gcapi.getGroupType(groupResults));
 				obj.put("uSNCreated", gcapi.getUSNCreated(groupResults));
 				obj.put("uSNChanged", gcapi.getUSNChanged(groupResults));
 				obj.put("objectGUID", gcapi.getObjectGuid(groupResults));
@@ -256,12 +280,20 @@ public class Adhelp extends HttpServlet {
 				if (attrtype.equalsIgnoreCase("samAccountName")) {
 					samAccountName = request.getParameter("id");
 					LOG.info("UsersamAccountName: " + samAccountName);
+					LOG.debug("samAccountName Lookup: " + samAccountName) ;
 
 				}
 				if (attrtype.equalsIgnoreCase("cn")) {
 					String cn = request.getParameter("id");
 					LOG.info("usercn: " + cn);
 					samAccountName = gcapi.getSamAccountNameFromCN(gcldpClient, gcbaseDn, cn);
+					LOG.debug("samAccountName cn Lookup: " + samAccountName)
+				}
+				if (attrtype.equalsIgnoreCase("eupn")) {
+					String eupn = request.getParameter("id");
+					LOG.info("eupn: " + eupn);
+					samAccountName = gcapi.getSamAccountNameFromEUPN(gcldpClient, gcbaseDn, eupn);
+					LOG.debug("samAccountName eupn Lookup: " + samAccountName);
 				}
 				String dn = gcapi.getDN(gcldpClient, gcbaseDn, samAccountName);
 				String domain_interim = dn.split(",DC=", 2)[1];
@@ -299,13 +331,17 @@ public class Adhelp extends HttpServlet {
 							+ manager + "</a><br>");
 				}
 				writer.println("eUPN: " + api.getUPN(results) + "<br>");
-				writer.println("iUPN: " + api.getSamAccountName(results) + "@" + domain + "<br>");
-				writer.println("Phone: " + api.getPhoneNumber(results) + "<br>");
-				writer.println("Email: " + api.getUserMail(results) + "<br>");
-				writer.println("Description: " + api.getDescription(results) + "<br>");
-				writer.println("Location: " + api.getLocation(results) + "<br>");
-				writer.println("State: " + api.getSt(results) + "<br>");
-				writer.println("Country: " + api.getCountry(results) + "<br>");
+				writer.println("iUPN: " +api.getSamAccountName(results)+"@"+domain + "<br>");
+				writer.println("phone: " + api.getPhoneNumber(results) + "<br>"); 
+				writer.println("ipPhone Extension: "+ api.getIpPhone(results)+ "<br>"); 
+				writer.println("email: " + api.getUserMail(results) + "<br>");
+				writer.println("description: " + api.getDescription(results) + "<br>");
+				writer.println("title: " + api.getTitle(results) + "<br›"); 
+				writer.println("department: " + api.getDepartment(results) + "<br>");
+				writer.println("division:" + api.getDivision(results) + "<br>");
+				writer.println("location: " + api.getLocation(results) + "<br>");
+				writer.println("state: " + api.getst(results) + "‹br>");
+				writer.println("country: " + api.getCountry(results) + "<br›");
 				writer.println("whenChanged: " + api.getWhenChanged(results) + "<br>");
 				writer.println("whenCreated: " + api.getWhenCreated(results) + "<br>");
 				writer.println("uSNCreated: " + api.getUSNCreated(results) + "<br>");
@@ -368,6 +404,7 @@ public class Adhelp extends HttpServlet {
 				writer.println("Email: " + gcapi.getUserMail(groupResults) + "<br>");
 				writer.println("Description: " + gcapi.getDescription(groupResults) + "<br>");
 				writer.println("whenChanged: " + gcapi.getWhenChanged(groupResults) + "<br>");
+				writer.println("GroupType: " + gcapi.getGroupType(groupResults) + "<br>");
 				writer.println("whenCreated: " + gcapi.getWhenCreated(groupResults) + "<br>");
 				writer.println("uSNCreated: " + gcapi.getUSNCreated(groupResults) + "<br>");
 				writer.println("uSNChanged: " + gcapi.getUSNChanged(groupResults) + "<br>");

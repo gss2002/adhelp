@@ -10,4 +10,6 @@
 .factorypath
 pom.xml.versionsBackup
 target
-war
+/.apt_generated/
+/war/
+/.apt_generated_tests/
