@@ -41,7 +41,7 @@
 		<repository>
 			<id>maven.senia.org</id>
 			<name>maven.senia.org</name>
-			<url>http://maven.senia.org/maven</url>
+			<url>https://maven.senia.org/maven</url>
 		</repository>
 	</repositories>
 
