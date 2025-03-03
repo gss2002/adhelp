@@ -60,8 +60,6 @@ public class Adhelp extends HttpServlet {
 	 */
 
 	public Adhelp() {
-		// TODO Auto-generated constructor stub
-
 		if (System.getProperty("ldapBaseDN") != null) {
 			gcbaseDn = System.getProperty("ldapBaseDN");
 
@@ -84,7 +82,6 @@ public class Adhelp extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
                 gcldapURL = ldapProtocol+"://"+dnsLookup.getLdapServer(ldapServerDns)+":"+ldapPort;
 		if (request.getParameter("json") != null) {
 			String reqtype = request.getParameter("type");
@@ -105,7 +102,7 @@ public class Adhelp extends HttpServlet {
 					samAccountName = gcapi.getSamAccountNameFromCN(gcldpClient, gcbaseDn, cn);
 				}
 				if (attrtype.equalsIgnoreCase("eupn")) {
-					String eupn = request-getParameter ("id");
+					String eupn = request.getParameter ("id");
 					LOG.info("eupn: " + eupn);
 					samAccountName = gcapi.getSamAccountNameFromEUPN(gcldpClient, gcbaseDn, eupn);
 				}
@@ -120,9 +117,9 @@ public class Adhelp extends HttpServlet {
 				LOG.debug (domain);
 				DnsLookup dns = new DnsLookup() ;
 				String ldapUrl = "";
-				String ldapServer = dns.getLdapServer(domain)
-				if (System.getProperty("ldap.ssl") |= null) {
-					if (System.getProperty("ldap.ssl").equalsIgnoreCase("true")) {|
+				String ldapServer = dns.getLdapServer(domain);
+				if (System.getProperty("ldap.ssl") != null) {
+					if (System.getProperty("ldap.ssl").equalsIgnoreCase("true")) {
 						ldapUrl = "ldaps://"+ldapServer+":636";
 					} else {
 						ldapUrl = "1dap://"+ldapServer+":389";
@@ -130,7 +127,7 @@ public class Adhelp extends HttpServlet {
 				} else {
 					ldapUrl = "ldap://"+ldapServer+":389";
 				}
-				LdapClient ldpClient = new LdapClientSASL(baseDn, ldapUrl,
+				LdapClient ldpClient = new LdapClientSASL(baseDn, ldapUrl, KerberosCreds.getSubject());
 
 				LdapApi api = new LdapApi();
 				Map<String, Attribute> results = api.getADUserGCAttrs(ldpClient, baseDn, samAccountName);
@@ -287,7 +284,7 @@ public class Adhelp extends HttpServlet {
 					String cn = request.getParameter("id");
 					LOG.info("usercn: " + cn);
 					samAccountName = gcapi.getSamAccountNameFromCN(gcldpClient, gcbaseDn, cn);
-					LOG.debug("samAccountName cn Lookup: " + samAccountName)
+					LOG.debug("samAccountName cn Lookup: " + samAccountName);
 				}
 				if (attrtype.equalsIgnoreCase("eupn")) {
 					String eupn = request.getParameter("id");
@@ -340,7 +337,7 @@ public class Adhelp extends HttpServlet {
 				writer.println("department: " + api.getDepartment(results) + "<br>");
 				writer.println("division:" + api.getDivision(results) + "<br>");
 				writer.println("location: " + api.getLocation(results) + "<br>");
-				writer.println("state: " + api.getst(results) + "‹br>");
+				writer.println("state: " + api.getSt(results) + "‹br>");
 				writer.println("country: " + api.getCountry(results) + "<br›");
 				writer.println("whenChanged: " + api.getWhenChanged(results) + "<br>");
 				writer.println("whenCreated: " + api.getWhenCreated(results) + "<br>");
