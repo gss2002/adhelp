@@ -1,0 +1,60 @@
+tr:hover {
+    background-color: #F2F2F2;
+}
+
+th, td {
+    padding: 3px;
+    text-align: left;
+    /* border-bottom: 1px solid #ddd; */
+}
+
+.hidden {
+    display: none;
+}
+
+h1 {
+    /* font-style: helvetica; */
+    font-color: white;
+    font-size: 2em;
+}
+
+.box {
+    width: 100px;
+    height: 25px;
+    border: solid 1px;
+    align: center;
+    border-style: ridge;
+    border-width: 1px;
+}
+
+a {
+    font-size: .95em;
+    align: center;
+}
+
+td {
+    font-family: Times;
+    font-size: .8em;
+}
+
+body {
+    background-color: #ffffff;
+    /* background-color: #D9F7F7; */
+    /* background-image: url('nyilogo.png'); */
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+select {
+}
+
+.container {
+    margin-top: 0px;
+}
+
+.navbar {
+    min-height: 80px;
+    max-height: 80px;
+}

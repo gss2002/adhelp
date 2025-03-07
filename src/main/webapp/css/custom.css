@@ -1,0 +1,32 @@
+tr:hover {
+    background-color: #F2F2F2;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    /* border-bottom: 1px solid #ddd; */
+}
+
+.hidden {
+    display: none;
+}
+
+h1 {
+    /* font-style: helvetica; */
+    font-color: white;
+    font-size: 2em;
+}
+
+.box {
+    width: 100px;
+    height: 25px;
+    border: solid 1px;
+    align: center;
+    align: bottom;
+}
+
+a {
+    font-size: 3em;
+    align: center;
+}
