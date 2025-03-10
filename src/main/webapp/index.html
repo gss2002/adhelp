@@ -7,125 +7,118 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>ADHelp | Title</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Custom CSS -->
     <link href="css/logo-nav.css" rel="stylesheet" type="text/css">
     <link href="css/skin.css" rel="stylesheet" media="screen">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-light navbar-fixed-top" style="background-color: #e3f2fd;" role="navigation">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#"></a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#bs-example-navbar-collapse-1" aria-controls="bs-example-navbar-collapse-1" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a class="navbar-brand" href="#"></a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#">Active Directory</a></li>
+                </ul>
+            </div>
         </div>
-        <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li><a href="#">Active Directory</a></li>
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
     </nav>
 
     <!-- Page Content -->
-    <div class="container">
+    <div class="container" style="margin-top: 70px;">
+        <!-- Active Directory Form -->
         <div class="row">
-            <div class="col-lg-12 col-xs-12 col-md-12 col-lg-12" style="height: 100%;" id="firstPanel">
-                <div class="panel panel-primary">
-                    <div class="panel-heading" style="text-align:center">Active Directory Form</div>
-                    <div class="panel-body">
-                        <div class="col-xs-4 col-s-4 col-md-4 col-lg-4">
-                            <input class="form-control" type="text" placeholder="Enter ID" id="txtSearch" onkeydown="if (event.keyCode == 13) document.getElementById('btnSearch').click();">
+            <div class="col-12" id="formPanel">
+                <div class="card border-primary">
+                    <div class="card-header text-center bg-primary text-white">Active Directory Form</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <input class="form-control" type="text" placeholder="Enter ID" id="txtSearch" onkeydown="if (event.keyCode == 13) document.getElementById('btnSearch').click();">
+                            </div>
+                            <div class="col-4">
+                                <select id="drop" class="form-select">
+                                    <option value="samAccountName" selected>samAccountName</option>
+                                    <option value="cn">cn</option>
+                                    <option value="eupn">eupn</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <select id="drop2" class="form-select">
+                                    <option value="User">User</option>
+                                    <option value="user">user</option>
+                                    <option value="group">group</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="btn-group float-end" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-primary" id="btnSearch" onclick="myFunction()">Submit</button>
+                                    <button type="button" class="btn btn-primary" id="btnBack" onclick="goBack()">Back</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="hidden">
-            <div class="col-xs-4 col-s-4 col-md-4 col-lg-4">
-                <select id="drop" class="form-control">
-                    <option value="samAccountName" selected="selected">samAccountName</option>
-                    <option value="cn">cn</option>
-                    <option value="eupn">eupn</option>
-                </select>
-            </div>
-            <div class="col-xs-4 col-s-4 col-md-4 col-lg-4">
-                <select id="drop2" class="form-control">
-                    <option value="User">User</option>
-                    <option value="user">user</option>
-                    <option value="group">group</option>
-                </select>
-            </div>
-            <div class="col-xs-12 col-s-12 col-md-12 col-lg-12">
-                <div class="col-xs-8 col-s-8 col-md-8 col-lg-8">
-                    <div class="col-md-2 col-md-push-8">
-                        <div class="btn-group" role="group" aria-label="...">
-                            <button type="button" class="btn btn-primary" id="btnSearch" onclick="myFunction()">Submit</button>
-                            <button type="button" class="btn btn-primary" id="btnSearch" onclick="goBack()">Back</button>
-                        </div>
+        <!-- Search and Results Panels -->
+        <div class="row mt-4">
+            <div class="col-8">
+                <div class="card border-primary" id="searchPanel">
+                    <div class="card-body">
+                        <table id="table" class="table">
+                            <thead>
+                                <tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            <div class="col-xs-4 col-s-4 col-md-4 col-lg-4">
-            </div>
-        </div>
-
-        <div class="panel panel-primary col-xs-8 col-s-8 col-md-8 col-lg-8" style="height: 100%;" id="firstPanel">
-            <div class="panel-heading">
-                <h3 class="panel-title">Search</h3>
-            </div>
-            <div class="panel-body">
-                <table id="table">
-                    <thead>
-                        <tr>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-
-        <div class="panel panel-primary col-xs-4 col-s-4 col-md-4 col-lg-4" style="height: 100%;" id="rightPanel">
-            <div class="panel-heading">
-                <h3 class="panel-title">Results</h3>
-            </div>
-            <div class="panel-body">
-                <table id="tableRight">
-                    <thead>
-                        <tr>
-                        </tr>
-                    </thead>
+            <div class="col-4">
+                <div class="card border-primary" id="resultsPanel">
+                    <div class="card-body">
+                        <table id="tableRight" class="table">
+                            <thead>
+                                <tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="js/jquery-3.7.1.min.js"></script>
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- Bootstrap 5 JS Bundle (includes Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
         // Global variables
         var prev = "";
-        firstId = document.getElementById("txtSearch");
-        idText = "";
+        var firstId = document.getElementById("txtSearch");
+        var idText = "";
         var httpRoot = location.protocol + "//" + location.hostname;
 
         function goBack() {
             var first = httpRoot + "/adhelp/Adhelp?id=";
-            var id_prev = Sattrtype_samAccountName_type_user$json;
+            var id_prev = "&attrType=samAccountName&type=user&json";
             console.log("id_prev");
             console.log(id);
             var link = first + id;
@@ -135,122 +128,249 @@
 
         function myFunction(myURL) {
             $.support.cors = true;
-            var url;
-            if (!myURL) {
-                url = myURL;
+            
+            // Get form values if no URL provided
+            var searchId = myURL ? null : document.getElementById("txtSearch").value;
+            var attrType = myURL ? null : $("#drop").val();
+            var type = myURL ? null : $("#drop2").val();
+
+            // Construct the URL
+            var url = myURL;
+            if (!url) {
+                url = httpRoot + "/adhelp/Adhelp?id=" + encodeURIComponent(searchId) + 
+                      "&attrType=" + encodeURIComponent(attrType) + 
+                      "&type=" + encodeURIComponent(type) + "&json";
             }
-            console.log("myURL");
-            console.log(myURL);
-            console.log(url);
-            console.logGroup(url);
 
-            firstId = document.getElementById("txtSearch");
-            var drop = $("#drop").val();
-            var dropDown = $("#drop2").val();
-            console.log(drop);
-            var text = "";
-            var firstHalf = httpRoot + "/adhelp/Adhelp?id=";
-            var secondHalf = Sattrtype + drop + stype + dropDown + "$json";
-            text = firstHalf + text + secondHalf;
-            console.log(url);
-            console.log(url);
-            console.log("URL");
-            $(document).getElementById("txtSearch").value = "Enter ID";
+            // Determine the type from the URL if provided
+            var displayType = type || (url.includes("type=group") ? "group" : "user");
+            console.log("Display type:", displayType);
 
-            $.getJSON(url, function(result) {
-                $('#table tbody').remove();
-                $('#table thead').remove();
-                var txt = "<tbody>";
-                var head = "";
-                var indexNumber = 1989;
-                var lengthOfMemberVariables = 1989;
-                var lengthMemberNames = 3887;
-                $.each(result, function(i, field) {
-                    if (i == "memberOf") {
-                        head = "<thead><th>Groups You are a Part of</th></thead>";
-                        $.each(field, function(index, value) {
-                            var prettyString = value.slice(38);
-                            word = "<tr id = '" + indexNumber + "'><a>" + prettyString + "</a></tr>";
-                            indexNumber = indexNumber + 1;
-                            console.log(value);
-                        });
-                    } else if (i == "members") { // Members in This Group
-                        head = "<thead><th>Members in This Group</th></thead>";
-                        var prettyString = value.slice(37);
-                        word = "<tr id = '" + indexNumber + "'><a>" + prettyString + "</a></tr>";
-                        indexNumber = indexNumber + 1;
-                        lengthOfMemberNames = lengthOfMemberNames + 1;
-                        console.log(lengthOfMemberNames);
-                    } else if (i == "manager") {
-                        var prettyString = field.slice(37);
-                        txt = "<tr><td>" + i + "</td><td>" + field + "</td></tr>";
-                    } else {
-                        var prettyString = field.slice(37);
-                        txt = "<tr><td>" + i + "</td><td>" + field + "</td></tr>";
+            console.log("Submitting GET request to:", url);
+
+            // Store the current search in idText for potential use in goBack()
+            idText = url;
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function(result) {
+                    console.log("Received JSON result:", result);
+
+                    // Clear both tables
+                    $('#table tbody').empty();
+                    $('#table thead').empty();
+                    $('#tableRight tbody').empty();
+                    $('#tableRight thead').empty();
+
+                    // Process data for left panel (search)
+                    var leftHead = "<tr><th>" + (displayType.toLowerCase() === "group" ? "Group Information" : "Account Information") + "</th><th></th></tr>";
+                    var leftBody = "<tbody>";
+                    var rightHead = "";
+                    var rightBody = "<tbody>";
+                    var indexNumber = 1989;
+                    var lengthOfMemberVariables = 1989;
+                    var lengthMemberNames = 3887;
+
+                    $.each(result, function(i, field) {
+                        console.log("Processing field:", i, field);
+                        if (i === "memberOf") {
+                            rightBody += "<tr><th colspan='2'>Groups You are a Part of</th></tr>";
+                            $.each(field, function(index, value) {
+                                var prettyString = value.slice(38);
+                                rightBody += "<tr id='right_" + indexNumber + "'><td><a href='#' onclick='lookupGroup.call(this); return false;'>" + prettyString + "</a></td></tr>";
+                                indexNumber = indexNumber + 1;
+                                lengthOfMemberVariables = indexNumber;
+                            });
+                        } else if (i === "members" && displayType.toLowerCase() === "group") {
+                            rightBody += "<tr><th colspan='2'>Members in this Group</th></tr>";
+                            $.each(field, function(index, value) {
+                                var prettyString = value.slice(37);
+                                rightBody += "<tr id='right_member_" + indexNumber + "'><td><a href='#' onclick='id_func.call(this); return false;'>" + prettyString + "</a></td></tr>";
+                                indexNumber = indexNumber + 1;
+                                lengthMemberNames = indexNumber;
+                            });
+                        } else if (i === "member" && displayType.toLowerCase() === "group") {
+                            rightBody += "<tr><th colspan='2'>Members in this Group</th></tr>";
+                            $.each(field, function(index, entry) {
+                                var memberID = entry.split("id=")[1];
+                                rightBody += "<tr id='right_member_" + indexNumber + "'><td><a href='#' onclick='id_func.call(this); return false;'>" + memberID + "</a></td></tr>";
+                                indexNumber = indexNumber + 1;
+                                lengthMemberNames = indexNumber;
+                            });
+                        } else if (i === "manager") {
+                            var managerValue = field;
+                            var managerID = managerValue.split("id=")[1];
+                            leftBody += "<tr><td>" + i + "</td><td><a href='#' onclick='lookupManager.call(this); return false;'>" + managerID + "</a></td></tr>";
+                        } else {
+                            leftBody += "<tr><td>" + i + "</td><td>" + field + "</td></tr>";
+                        }
+                    });
+                    leftBody += "</tbody>";
+                    rightBody += "</tbody>";
+
+                    console.log("Left panel head:", leftHead);
+                    console.log("Left panel body:", leftBody);
+                    console.log("Right panel body:", rightBody);
+
+                    // Update left panel (search)
+                    $("#table thead").html(leftHead);
+                    $("#table tbody").html(leftBody);
+
+                    // Update right panel (results)
+                    $("#tableRight thead").html(rightHead);
+                    $("#tableRight tbody").html(rightBody);
+
+                    // Add click event listeners for right panel (groups and members)
+                    for (let i = 1989; i < lengthOfMemberVariables; i++) {
+                        let element = document.getElementById('right_' + i);
+                        if (element) {
+                            element.querySelector('a').onclick = function(e) {
+                                e.preventDefault();
+                                lookupGroup.call(this);
+                            };
+                        }
                     }
-                    txt += "</tbody>";
-                    word = "<tbody>" + head + txt + "</tbody>";
-                    $("#table").append(txt);
-                    $("#tableRight").append(head);
-                });
-
-                for (i = 3887; i < lengthOfMemberNames; i++) {
-                    document.getElementById(i).onclick = id_func;
-                }
-
-                for (i = 1989; i < lengthOfMemberVariables; i++) {
-                    document.getElementById(i).onclick = reply_click;
+                    for (let i = 1989; i < lengthMemberNames; i++) {
+                        let element = document.getElementById('right_member_' + i);
+                        if (element) {
+                            element.querySelector('a').onclick = function(e) {
+                                e.preventDefault();
+                                id_func.call(this);
+                            };
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("GET request failed:", status, error);
+                    console.error("Response:", xhr.responseText);
+                    alert("Error occurred while submitting the form. Please check the console for details.");
                 }
             });
         }
 
         var id_func = function() {
-            var y = document.getElementById(this.id).innerText;
+            var y = this.innerText;
             var txt = y.toLowerCase();
             var firstH = httpRoot + "/adhelp/Adhelp?id=";
-            var secondH = Sattrtype_samAccountName_type_user$json;
-            prev = idText + Sattrtype_samAccountName_type_user$json;
-            idText = firstH + txt + secondH;
-            var link = firstH + txt + secondH;
+            var secondH = "&attrType=samAccountName&type=user&json";
+            prev = idText;
+            idText = firstH + encodeURIComponent(txt) + secondH;
+            var link = idText;
             myFunction(link);
         }
 
+        function lookupGroup() {
+            var groupName = this.innerText;
+            var url = httpRoot + "/adhelp/Adhelp?id=" + encodeURIComponent(groupName) + "&attrType=cn&type=group&json";
+            console.log("Group lookup URL:", url);
+            prev = idText;
+            idText = url;
+            myFunction(url);
+        }
+
+        function lookupManager() {
+            var managerID = this.innerText;
+            var attrType = $("#drop").val();
+            var type = $("#drop2").val();
+            var url = httpRoot + "/adhelp/Adhelp?id=" + encodeURIComponent(managerID) + 
+                      "&attrType=" + encodeURIComponent(attrType) + 
+                      "&type=" + encodeURIComponent(type) + "&json";
+            console.log("Manager lookup URL:", url);
+            prev = idText;
+            idText = url;
+            myFunction(url);
+        }
+
         var reply_click = function() {
-            if (idText != Sattrtype_samAccountName_type_user$json) {
+            if (idText !== "&attrType=samAccountName&type=user&json") {
                 prev = idText;
             }
-            console.log(this.id);
-            idText = document.getElementById(this.id).innerText.toLowerCase();
-            var url = httpRoot + "/adhelp/Adhelp?id=" + idText + "$json";
-            console.log(url);
-            $.getJSON(url, function(result) {
-                $('#tableRight tbody').remove();
-                $('#tableRight thead').remove();
-                var word = "<tbody>";
-                var head = "";
-                $.each(result, function(i, field) {
-                    if (i == "memberOf") {
-                        head = "<thead><th>Groups You are a Part of</th></thead>";
-                        $.each(field, function(index, value) {
-                            var prettyString = value.slice(38);
-                            word += "<tr id = '" + indexNumber + "'><a>" + prettyString + "</a></tr>";
-                            indexNumber = indexNumber + 1;
-                            console.log(value);
-                        });
-                    } else if (i == "members") { // Members in This Group
-                        head = "<thead><th>Members in This Group</th></thead>";
-                        var prettyString = value.slice(37);
-                        word += "<tr id = '" + indexNumber + "'><a>" + prettyString + "</a></tr>";
-                        indexNumber = indexNumber + 1;
-                        lengthOfMemberNames = lengthOfMemberNames + 1;
-                        console.log(lengthOfMemberNames);
-                    } else {
-                        var prettyString = field.slice(37);
-                        word += "<tr><td>" + i + "</td><td>" + field + "</td></tr>";
+            idText = this.innerText.toLowerCase();
+            var url = httpRoot + "/adhelp/Adhelp?id=" + encodeURIComponent(idText) + "&json";
+            console.log("Reply click URL:", url);
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function(result) {
+                    console.log("Reply click JSON result:", result);
+
+                    $('#tableRight tbody').empty();
+                    $('#tableRight thead').empty();
+
+                    var rightHead = "";
+                    var rightBody = "<tbody>";
+                    var indexNumber = 1989;
+                    var lengthMemberNames = 3887;
+
+                    var displayType = url.includes("type=group") ? "group" : "user";
+                    console.log("Reply click display type:", displayType);
+
+                    $.each(result, function(i, field) {
+                        console.log("Processing field in reply_click:", i, field);
+                        if (i === "memberOf") {
+                            rightBody += "<tr><th colspan='2'>Groups You are a Part of</th></tr>";
+                            $.each(field, function(index, value) {
+                                var prettyString = value.slice(38);
+                                rightBody += "<tr id='right_" + indexNumber + "'><td><a href='#' onclick='lookupGroup.call(this); return false;'>" + prettyString + "</a></td></tr>";
+                                indexNumber = indexNumber + 1;
+                            });
+                        } else if (i === "members" && displayType.toLowerCase() === "group") {
+                            rightBody += "<tr><th colspan='2'>Members in this Group</th></tr>";
+                            $.each(field, function(index, value) {
+                                var prettyString = value.slice(37);
+                                rightBody += "<tr id='right_member_" + indexNumber + "'><td><a href='#' onclick='id_func.call(this); return false;'>" + prettyString + "</a></td></tr>";
+                                indexNumber = indexNumber + 1;
+                                lengthMemberNames = indexNumber;
+                            });
+                        } else if (i === "member" && displayType.toLowerCase() === "group") {
+                            rightBody += "<tr><th colspan='2'>Members in this Group</th></tr>";
+                            $.each(field, function(index, entry) {
+                                var memberID = entry.split("id=")[1];
+                                rightBody += "<tr id='right_member_" + indexNumber + "'><td><a href='#' onclick='id_func.call(this); return false;'>" + memberID + "</a></td></tr>";
+                                indexNumber = indexNumber + 1;
+                                lengthMemberNames = indexNumber;
+                            });
+                        } else if (i === "manager") {
+                            var managerValue = field;
+                            var managerID = managerValue.split("id=")[1];
+                            rightBody += "<tr><td>" + i + "</td><td><a href='#' onclick='lookupManager.call(this); return false;'>" + managerID + "</a></td></tr>";
+                        } else {
+                            rightBody += "<tr><td>" + i + "</td><td>" + field + "</td></tr>";
+                        }
+                    });
+                    rightBody += "</tbody>";
+
+                    console.log("Right panel body in reply_click:", rightBody);
+
+                    $("#tableRight thead").html(rightHead);
+                    $("#tableRight tbody").html(rightBody);
+
+                    for (let i = 1989; i < lengthMemberNames; i++) {
+                        let element = document.getElementById('right_' + i);
+                        if (element) {
+                            element.querySelector('a').onclick = function(e) {
+                                e.preventDefault();
+                                lookupGroup.call(this);
+                            };
+                        }
+                        let memberElement = document.getElementById('right_member_' + i);
+                        if (memberElement) {
+                            memberElement.querySelector('a').onclick = function(e) {
+                                e.preventDefault();
+                                id_func.call(this);
+                            };
+                        }
                     }
-                });
-                word += "</tbody>";
-                $("#tableRight").append(word);
+                },
+                error: function(xhr, status, error) {
+                    console.error("GET request failed in reply_click:", status, error);
+                    console.error("Response:", xhr.responseText);
+                    alert("Error occurred while fetching additional data. Please check the console for details.");
+                }
             });
         }
 
