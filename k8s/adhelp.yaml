@@ -1,0 +1,119 @@
+---
+# ConfigMap for JAVA_OPTS
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adhelp-config
+  namespace: adhelp
+  labels:
+    app: adhelp
+data:
+  JAVA_OPTS: "-Djava.security.krb5.conf=/etc/krb5.conf -Dadhelp.keytab=/etc/adhelp.keytab -Dadhelp.principalName=hdpbind@HDPUSR.EXAMPLE.ORG -Dldap.ssl=true -DldapServer=ldaps://hdpusr.example.org:3269 -DldapBaseDN=dc\\=hdpusr,dc\\=example,dc\\=org"
+---
+# ConfigMap for krb5.conf
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adhelp-krb5-conf
+  namespace: adhelp
+  labels:
+    app: adhelp
+data:
+  krb5.conf: |
+    [libdefaults]
+        default_realm = HDPUSR.EXAMPLE.ORG
+        dns_lookup_realm = true
+        dns_lookup_kdc = true
+        ticket_lifetime = 10h
+        renew_lifetime = 7d
+        forwardable = true
+---
+# Deployment for adhelp application
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adhelp
+  namespace: adhelp
+  labels:
+    app: adhelp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adhelp
+  template:
+    metadata:
+      labels:
+        app: adhelp
+    spec:
+      containers:
+      - name: adhelp
+        image: registry.devops.example.org/k8s/images/adhelp:latest  # Replace with your actual image
+        ports:
+        - containerPort: 8080
+        env:
+        - name: JAVA_OPTS
+          valueFrom:
+            configMapKeyRef:
+              name: adhelp-config
+              key: JAVA_OPTS
+        resources:
+          limits:
+            cpu: "1"
+            memory: "2Gi"
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+        volumeMounts:
+        - name: krb5-conf
+          mountPath: "/etc/krb5.conf"
+          subPath: "krb5.conf"
+        - name: keytab
+          mountPath: "/etc/adhelp.keytab"
+          subPath: "adhelp.keytab"
+      volumes:
+      - name: krb5-conf
+        configMap:
+          name: adhelp-krb5-conf
+      - name: keytab
+        configMap:
+          name: adhelp-keytab
+---
+# Service for adhelp
+apiVersion: v1
+kind: Service
+metadata:
+  name: adhelp
+  namespace: adhelp
+  labels:
+    app: adhelp
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: adhelp
+  type: ClusterIP
+---
+# Ingress for adhelp
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: adhelp
+  namespace: adhelp
+  labels:
+    app: adhelp
+spec:
+  rules:
+  - host: adhelp.k8s.example.org
+    http:
+      paths:
+      - path: /adhelp/
+        pathType: Prefix
+        backend:
+          service:
+            name: adhelp
+            port:
+              number: 80
+  ingressClassName: nginx  # Adjust based on your ingress controller

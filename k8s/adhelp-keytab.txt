@@ -1,0 +1,1 @@
+kubectl create cm -n adhelp adhelp-keytab --from-file=adhelp.keytab 
